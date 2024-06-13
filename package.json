@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode dev",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -13,6 +13,11 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
-    "vite": "^5.2.0"
+    "axios": "^1.7.2",
+    "element-plus": "^2.7.5",
+    "sass": "^1.77.4",
+    "vite": "^5.2.0",
+    "vue-router": "^4.0.4",
+    "vuex": "^4.0.2"
   }
 }

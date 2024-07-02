@@ -29,7 +29,7 @@
 </template>
 <script setup>
 import { login } from "@/api/user.js"
-import { ref } from "vue"
+import { ref, onBeforeUnmount } from "vue"
 import { ElMessage } from "element-plus"
 import { useRouter } from "vue-router"
 import { useStore } from "vuex"
@@ -59,18 +59,20 @@ const userFormRef = ref(null)
 // 登录处理函数
 const submit = () => {
   userFormRef.value.validate(async valid => {
-    console.log(this)
     if (valid) {
       const res = await login({
-        username: userForm.value.userName,
+        userName: userForm.value.userName,
         userPwd: userForm.value.userPwd
       })
-      store.commit("saveUserInfo", res)
-      console.log(res)
-      ElMessage.success("登录成功")
-      setInterval(() => {
+      store.commit("saveUserInfo", res.data)
+
+      const code = res.code
+      if (code == 200 || res.status == 100001) {
+        ElMessage.success("登录成功")
         router.push("/welcome")
-      }, 1500)
+      } else {
+        ElMessage.error(res.msg)
+      }
     } else {
       ElMessage.error()
       ;("表单验证失败")

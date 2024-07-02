@@ -76,7 +76,10 @@ a {
     border-bottom: 1px solid #ece8e8;
   }
   .pagination {
-    text-align: right;
+    // text-align: right;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 10px;
   }
 }

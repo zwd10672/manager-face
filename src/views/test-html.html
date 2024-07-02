@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .dialog {
+        position: relative;
+        width: 300px;
+        line-height: 2;
+        background-color: lightblue;
+        color: #fff;
+        margin-top: 50px;
+        margin-left: 50px;
+        padding-left: 20px;
+      }
+      .dialog::before {
+        position: absolute;
+        border: 16px solid;
+        border-color: transparent lightblue transparent transparent;
+        left: -32px;
+        top: px;
+        content: "";
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dialog">这是一个对话框</div>
+  </body>
+  <script>
+    function test(person) {
+      person.age = 18
+      person = {
+        age: 20,
+        name: "yhs"
+      }
+      return person
+    }
+    const p1 = {
+      age: 22,
+      name: "xsc"
+    }
+    const p2 = test(p1)
+    console.log(p1)
+    console.log(p2)
+  </script>
+</html>

@@ -12,7 +12,7 @@ import './assets/style/reset.css'; // 引入全局样式
 console.log(import.meta.env);
 const app = createApp(App);
 app.config.globalProperties.$request = request
-app.use(ElementPlus).use(store).use(router).mount('#app')
+app.use(ElementPlus, { size: 'small' }).use(store).use(router).mount('#app')
 // 注册所有图标组件
 for (const name in ElIcons) {
   app.component(name, ElIcons[name]);

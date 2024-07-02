@@ -4,7 +4,7 @@
 const env = import.meta.env.MODE || 'prod';
 const EnvConfig = {
   dev: {
-    baseApi: '',
+    baseApi: '/api',
     mockApi: 'https://apifoxmock.com/m1/4647664-4298320-default'
   },
   test: {
@@ -19,7 +19,8 @@ const EnvConfig = {
 console.log(EnvConfig);
 export default {
   env,
-  mock: true,
+  // mock: true,
+  mock: false,
   namespace: 'manager',
   ...EnvConfig[env]
 }

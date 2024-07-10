@@ -1,20 +1,12 @@
 <template>
   <div class="user-manager">
     <div class="query-form">
-      <el-form
-        ref="formRef"
-        :inline="true"
-        :model="user"
-        class="demo-form-inline"
-      >
+      <el-form ref="formRef" :inline="true" :model="user" class="demo-form-inline">
         <el-form-item label="用户ID" prop="userId">
           <el-input v-model="user.userId" placeholder="请输入用户Id"></el-input>
         </el-form-item>
         <el-form-item label="用户名称" prop="userName">
-          <el-input
-            v-model="user.userName"
-            placeholder="请输入用户名称"
-          ></el-input>
+          <el-input v-model="user.userName" placeholder="请输入用户名称"></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-select v-model="user.state" placeholder="请选择状态">
@@ -49,12 +41,8 @@
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template #default="scope">
-            <el-button type="primary" @click="handleEdit(scope.row)"
-              >编辑</el-button
-            >
-            <el-button type="danger" @click="handleDel(scope.row)"
-              >删除</el-button
-            >
+            <el-button type="primary" @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button type="danger" @click="handleDel(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -68,26 +56,14 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <!-- 用户新增弹窗 -->
     <el-dialog title="用户新增" v-model="showModal">
-      <el-form
-        ref="dialogFormRef"
-        :model="user"
-        label-width="100px"
-        :rules="rules"
-      >
+      <el-form ref="dialogFormRef" :model="user" label-width="100px" :rules="rules">
         <el-form-item label="用户名" prop="userName">
-          <el-input
-            v-model="user.userName"
-            :disabled="action == 'edit'"
-            placeholder="请输入用户名称"
-          />
+          <el-input v-model="user.userName" :disabled="action == 'edit'" placeholder="请输入用户名称" />
         </el-form-item>
         <el-form-item label="邮箱" prop="userEmail">
-          <el-input
-            v-model="user.userEmail"
-            :disabled="action == 'edit'"
-            placeholder="请输入用户邮箱"
-          >
+          <el-input v-model="user.userEmail" :disabled="action == 'edit'" placeholder="请输入用户邮箱">
             <template #append>qq.com</template>
           </el-input>
         </el-form-item>
@@ -105,18 +81,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="系统角色" prop="roleList">
-          <el-select
-            v-model="user.roleList"
-            placeholder="请选择用户系统角色"
-            multiple
-            style="width: 100%"
-          >
-            <el-option
-              v-for="role in roleList"
-              :key="role._id"
-              :label="role.roleName"
-              :value="role._id"
-            ></el-option>
+          <el-select v-model="user.roleList" placeholder="请选择用户系统角色" multiple style="width: 100%">
+            <el-option v-for="role in roleList" :key="role._id" :label="role.roleName" :value="role._id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="部门" prop="deptId">
@@ -137,19 +103,20 @@
         </span>
       </template>
     </el-dialog>
+    <!-- 删除弹窗 -->
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+      <span>确定要删除吗</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="doDel">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { nextTick, reactive, ref, toRaw } from "vue"
-import {
-  usersList,
-  usersDelete,
-  usersOperate,
-  deptsList,
-  rolesList,
-  rolesAllList
-} from "@/api/user.js"
+import { usersList, usersDelete, usersOperate, deptsList, rolesList, rolesAllList } from "@/api/user.js"
 import utils from "@/util/utils.js"
 import { ElMessage } from "element-plus"
 import { login } from "../api/user"

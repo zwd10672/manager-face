@@ -1,11 +1,11 @@
 <template>
   <div class="user-manage">
     <div class="query-form">
-      <el-form ref="form" :inline="true" :model="queryForm">
+      <el-form ref="formRef" :inline="true" :model="queryForm">
         <el-form-item label="菜单名称" prop="menuName">
           <el-input v-model="queryForm.menuName" placeholder="请输入菜单名称" />
         </el-form-item>
-        <el-form-item label="菜单状态" prop="menuState">
+        <el-form-item label="菜单状态" width="180px" style="width: 180px" prop="menuState">
           <el-select v-model="queryForm.menuState">
             <el-option :value="1" label="正常"></el-option>
             <el-option :value="2" label="停用"></el-option>
@@ -13,7 +13,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getMenuList">查询</el-button>
-          <el-button @click="handleReset('form')">重置</el-button>
+          <el-button @click="handleReset('formRef')">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -21,11 +21,7 @@
       <div class="action">
         <el-button type="primary" @click="handleAdd(1)">新增</el-button>
       </div>
-      <el-table
-        :data="menuList"
-        row-key="_id"
-        :tree-props="{ children: 'children' }"
-      >
+      <el-table :data="menuListData" row-key="_id" :tree-props="{ children: 'children' }">
         <el-table-column
           v-for="item in columns"
           :key="item.prop"
@@ -37,28 +33,20 @@
         </el-table-column>
         <el-table-column label="操作" width="220">
           <template #default="scope">
-            <el-button @click="handleAdd(2, scope.row)" type="primary"
-              >新增</el-button
-            >
+            <el-button @click="handleAdd(2, scope.row)" type="primary">新增</el-button>
             <el-button @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button type="danger" @click="handleDel(scope.row._id)"
-              >删除</el-button
-            >
+            <el-button type="danger" @click="handleDel(scope.row._id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog title="用户新增" v-model="showModal">
-      <el-form
-        ref="dialogForm"
-        :model="menuForm"
-        label-width="100px"
-        :rules="rules"
-      >
+
+    <el-dialog title="用户新增" v-model="showModal" :before-close="handleClose">
+      <el-form ref="dialogFormRef" :model="menuForm" label-width="100px" :rules="rules">
         <el-form-item label="父级菜单" prop="parentId">
           <el-cascader
             v-model="menuForm.parentId"
-            :options="menuList"
+            :options="menuListData"
             :props="{ checkStrictly: true, value: '_id', label: 'menuName' }"
             clearable
           />
@@ -66,49 +54,29 @@
         </el-form-item>
         <el-form-item label="菜单类型" prop="menuType">
           <el-radio-group v-model="menuForm.menuType">
-            <el-radio :label="1">菜单</el-radio>
-            <el-radio :label="2">按钮</el-radio>
+            <el-radio :value="1">菜单</el-radio>
+            <el-radio :value="2">按钮</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="菜单名称" prop="menuName">
           <el-input v-model="menuForm.menuName" placeholder="请输入菜单名称" />
         </el-form-item>
-        <el-form-item
-          label="菜单图标"
-          prop="icon"
-          v-show="menuForm.menuType == 1"
-        >
+        <el-form-item label="菜单图标" prop="icon" v-show="menuForm.menuType == 1">
           <el-input v-model="menuForm.icon" placeholder="请输入岗位" />
         </el-form-item>
-        <el-form-item
-          label="路由地址"
-          prop="path"
-          v-show="menuForm.menuType == 1"
-        >
+        <el-form-item label="路由地址" prop="path" v-show="menuForm.menuType == 1">
           <el-input v-model="menuForm.path" placeholder="请输入路由地址" />
         </el-form-item>
-        <el-form-item
-          label="权限标识"
-          prop="menuCode"
-          v-show="menuForm.menuType == 2"
-        >
+        <el-form-item label="权限标识" prop="menuCode" v-show="menuForm.menuType == 2">
           <el-input v-model="menuForm.menuCode" placeholder="请输入权限标识" />
         </el-form-item>
-        <el-form-item
-          label="组件路径"
-          prop="component"
-          v-show="menuForm.menuType == 1"
-        >
+        <el-form-item label="组件路径" prop="component" v-show="menuForm.menuType == 1">
           <el-input v-model="menuForm.component" placeholder="请输入组件路径" />
         </el-form-item>
-        <el-form-item
-          label="菜单状态"
-          prop="menuState"
-          v-show="menuForm.menuType == 1"
-        >
+        <el-form-item label="菜单状态" prop="menuState" v-show="menuForm.menuType == 1">
           <el-radio-group v-model="menuForm.menuState">
-            <el-radio :label="1">正常</el-radio>
-            <el-radio :label="2">停用</el-radio>
+            <el-radio :value="1">正常</el-radio>
+            <el-radio :value="2">停用</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -126,11 +94,11 @@ import utils from "@/util/utils.js"
 import { getMenuList } from "@/api/user.js"
 import { ref, reactive, nextTick } from "vue"
 import { ElMessage } from "element-plus"
-
-const queryForm = ref({
+// 定义用户数据
+const queryForm = reactive({
   menuState: 1
 })
-const menuList = ref([])
+const menuListData = ref([])
 const columns = ref([
   {
     label: "菜单名称",
@@ -183,7 +151,7 @@ const columns = ref([
   }
 ])
 const showModal = ref(false)
-const menuForm = ref({
+const menuForm = reactive({
   parentId: [null],
   menuType: 1,
   menuState: 1
@@ -204,66 +172,69 @@ const rules = ref({
     }
   ]
 })
-
-// 菜单列表初始化
-//  const menusList = async () => {
-//       let list = await getMenuList()
-//       menuList.value = list
-//   },
-const menusList = async () => {
-  let list = await getMenuList(queryForm.value)
-  console.log(list)
-  menuList.value = list.data
+// 查询表单实例
+const formRef = ref(null)
+// 新增表单实例
+const dialogFormRef = ref(null)
+// 获取菜单列表
+const menuList = async () => {
+  const list = await getMenuList(queryForm.value)
+  menuListData.value = list.data
 }
-menusList()
 // 表单重置
-//  const handleReset = (form) =>{
-//     $refs[form].resetFields()
-//   },
+const handleReset = () => {
+  formRef.value.resetFields()
+}
 // 新增菜单
 const handleAdd = (type, row) => {
   showModal.value = true
   action.value = "add"
+  if (type == 2) {
+    menuForm.parentId = [...row.parentId, row._id].filter(item => item)
+  }
 }
-// const handleAdd = (type, row) => {
-//   showModal.value = true
-//   action.value = "add"
-//   // if (type == 2) {
-//   // menuForm.parentId.value = [...row.parentId, row._id].filter(item => item)
-//   // }
-// },
-// const handleEdit = (row) => {
-//   showModal.value = true
-//   action.value = "edit"
-//   nextTick(() => {
-//     Object.assign(menuForm.value, row)
-//   })
-// },
-// async handleDel(_id) {
-//   await this.$api.menuSubmit({ _id, action: "delete" })
-//   ElMessage.success("删除成功")
-//   getMenuList()
-// },
-// 菜单操作-提交
-// handleSubmit() {
-//   this.$refs.dialogForm.validate(async valid => {
-//     if (valid) {
-//       let { action, menuForm } = this
-//       let params = { ...menuForm, action }
-//       let res = await this.$api.menuSubmit(params)
-//       this.showModal = false
-//       this.$message.success("操作成功")
-//       this.handleReset("dialogForm")
-//       this.getMenuList()
-//     }
-//   })
-// },
+// 编辑菜单
+const handleEdit = row => {
+  showModal.value = true
+  action.value = "edit"
+  nextTick(() => {
+    Object.assign(menuForm, row)
+  })
+}
+// 删除
+const handleDel = async () => {
+  const res = await menuSubmit({ _id, action: "delete" })
+  if (res.data) {
+    ElMessage.success("删除成功")
+    menuList()
+  }
+  {
+    ElMessage.info("删除失败")
+  }
+}
+// 菜单操作
+const handleSubmit = () => {
+  console.log(dialogFormRef)
+  dialogFormRef.value.validate(async valid => {
+    if (valid) {
+      let params = { ...menuForm, action }
+      const res = await menuSubmit(params)
+      if (res.data) {
+        showModal.value = false
+        ElMessage.success("操作成功")
+        handleClose()
+        menuList()
+      }
+    }
+  })
+}
 // 弹框关闭
-// const handleClose = () => {
-//   showModal.value = false
-//   handleReset("dialogForm")
-// }
-// menusList()
+const handleClose = () => {
+  showModal.value = false
+  dialogFormRef.value.resetFields()
+  handleReset("dialogFormRef")
+}
+menuList()
 </script>
 
 <style lang="scss"></style>

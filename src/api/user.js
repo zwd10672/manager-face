@@ -34,7 +34,7 @@ export const getMenuList = (params) => {
     method: 'get',
     url: '/menu/list',
     data: params,
-    mock: false
+    mock: true
   })
 }
 // 用户列表
@@ -70,7 +70,7 @@ export const deptsList = (params) => {
     method: 'get',
     url: '/dept/list',
     data: params,
-    mock: true
+    mock: false
   })
 }
 // 角色名称列表
